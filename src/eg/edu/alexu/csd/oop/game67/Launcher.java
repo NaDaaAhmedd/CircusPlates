@@ -52,24 +52,27 @@ public class Launcher {
                 start.setVisible(false);
                 exit.setVisible(false);
                 JButton L1 = new JButton();
-                f.add(L1);
-                JButton L2 = new JButton();
-                ImageIcon icon3 = new ImageIcon(getimage("res\\l2.jpg"));
-                L2.setIcon(icon3);
-                L2.setVisible(true);
-                f.getContentPane().add(L2);
-                L2.setBackground(Color.white);
-                L2.setBounds(0, 250, 600, 300);
-                JButton L3 = new JButton();
-                f.add(L3);
                 L1.setBounds(0, 0, 600, 250);
-                L3.setBounds(0, 550, 600, 300);
+                f.add(L1);
+                label.add(L1);
                 ImageIcon icon2 = new ImageIcon(getimage("res\\b.png"));
                 L1.setIcon(icon2);
                 L1.setBackground(Color.white);
+                JButton L2 = new JButton();
+                f.getContentPane().add(L2);
+                ImageIcon icon3 = new ImageIcon(getimage("res\\l2.jpg"));
+                L2.setIcon(icon3);
+                L2.setBackground(Color.white);
+                L2.setBounds(0, 250, 600, 300);
+                label.add(L2);
+                JButton L3 = new JButton();
+                f.add(L3);
+                L3.setBounds(0, 550, 600, 300);
                 ImageIcon icon4 = new ImageIcon(getimage("res\\l3.jpg"));
                 L3.setIcon(icon4);
                 L3.setBackground(Color.white);
+                label.add(L3);
+                f.add(label);
                 L1.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -162,4 +165,5 @@ public class Launcher {
         }
         return im;
     }
+
 }
