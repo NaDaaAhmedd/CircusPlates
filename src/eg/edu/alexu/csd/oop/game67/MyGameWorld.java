@@ -1,4 +1,5 @@
 package eg.edu.alexu.csd.oop.game67;
+import eg.edu.alexu.csd.oop.game.GameEngine;
 import eg.edu.alexu.csd.oop.game.GameObject;
 import eg.edu.alexu.csd.oop.game.World;
 import javax.swing.*;
@@ -22,10 +23,9 @@ public class MyGameWorld implements World, Observable {
     private int saved;
     private logger l = logger.getInstance();
     private  int speed;
-    private int max_size;
 
 
-    public MyGameWorld(int screenWidth, int screenHeight, int max_size, int level, String p,int speed) {
+    public MyGameWorld(int screenWidth, int screenHeight, int level, String p,int speed) {
         fwo = flyweightGObject.getInstance();
         File f = new File("shapes");
         fwo.setPath(f.list());
@@ -41,7 +41,6 @@ public class MyGameWorld implements World, Observable {
         String[] tmp = new String[s.size()];
         s.copyInto(tmp);
         fwo.setPath(tmp);
-        this.max_size = max_size;
         width = screenWidth;
         this.speed=speed;
         height = screenHeight;
@@ -115,7 +114,7 @@ public class MyGameWorld implements World, Observable {
                 m.setX((int) (Math.random() * getWidth()));
             }
             m.setX(m.getX() + (Math.random() > 0.5 ? 1 : -1));
-            if (m.isBomb() && m.getY() == control.get(control.size() - 1).getY() - 100 && m.getX() > clown.getX() && m.getX() - 20 < clown.getX() + clown.getWidth() - 20) {
+            if (m.isBomb() && m.getY() == control.get(control.size() - 1).getY() - 100 && m.getX() > clown.getX() -20  && m.getX() < clown.getX() + clown.getWidth() - 20) {
                 notify(null, "warn");
             }
             if (m.isBomb() && intersect(m, control.get(control.size() - 1))) {
@@ -174,9 +173,7 @@ public class MyGameWorld implements World, Observable {
             control.add(b);
             int size = control.size();
             score++;
-            if (score == max_size) {
-                notify(score, "win");
-            } else notify(score, null);
+            notify(score, null);
             for (int i = size - 1; i > size - 4; i--) {
                 control.remove(i);
                 fwo.check_add(moving, height, width);
