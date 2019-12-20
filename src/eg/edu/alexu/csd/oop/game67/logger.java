@@ -14,7 +14,7 @@ public class logger implements Observer {
     private boolean isGameEnd = false;
     private File f = new File("logger.txt");
     private static logger instance;
-
+private boolean warned = false;
     private logger() {
         try {
             f.createNewFile();
@@ -40,16 +40,21 @@ public class logger implements Observer {
     public void update(Object arg, String GameEnd) {
         if (isGameEnd) return;
         if (GameEnd != null) {
-            if (GameEnd.contains("lose")) {
+            if (GameEnd.equals("lose")) {
                 msg = "Game Over!";
                 isGameEnd = true;
                 MyLog.info(msg);
-            } else {
+            } else if (GameEnd.equals("warn")) {
                 msg = "The bomb is almost here!!";
                 MyLog.warning(msg);
+            } else if (!warned){
+                msg = "The highest item is about to reach the top of the screen!!";
+                MyLog.warning(msg);
+                warned = true;
             }
 
         } else {
+            warned = false;
             if (arg instanceof String) {
                 msg = "An item is catched!";
             } else {
