@@ -1,8 +1,8 @@
 package eg.edu.alexu.csd.oop.game67;
-import eg.edu.alexu.csd.oop.game.GameEngine;
+
 import eg.edu.alexu.csd.oop.game.GameObject;
 import eg.edu.alexu.csd.oop.game.World;
-import javax.swing.*;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.LinkedList;
@@ -10,31 +10,30 @@ import java.util.List;
 import java.util.Vector;
 
 public class MyGameWorld implements World, Observable {
-    private final List<GameObject> constant = new LinkedList<GameObject>();
-    private List<Observer> listobservers = new LinkedList<Observer>();
-    private List<Memento> UndoList = new LinkedList<Memento>();
-    private List<GameObject> moving = new LinkedList<GameObject>();
-    private List<GameObject> control = new LinkedList<GameObject>();
-    private int score;
+    private final List<GameObject> constant = new LinkedList<>();
     private final int width;
     private final int height;
+    private List<Observer> listobservers = new LinkedList<>();
+    private List<Memento> UndoList = new LinkedList<>();
+    private List<GameObject> moving = new LinkedList<>();
+    private List<GameObject> control = new LinkedList<>();
+    private int score;
     private flyweightGObject fwo;
     private int CounterUndo = -1;
     private int saved;
     private logger l = logger.getInstance();
-    private  int speed;
+    private int speed;
 
 
-    public MyGameWorld(int screenWidth, int screenHeight, int level, String p,int speed) {
+    public MyGameWorld(int screenWidth, int screenHeight, int level, String p, int speed) {
         fwo = flyweightGObject.getInstance();
         File f = new File("shapes");
         fwo.setPath(f.list());
-        Vector<String> s = new Vector<String>();
-        for( int i = 0 ; i < fwo.getPath().length ; i++){
-            if ((level == 1 && (fwo.getPath()[i].equals("bomb.png") || fwo.getPath()[i].equals("orange.png")) ) || (level == 2 && fwo.getPath()[i].equals("bomb.png"))  ){
+        Vector<String> s = new Vector<>();
+        for (int i = 0; i < fwo.getPath().length; i++) {
+            if ((level == 1 && (fwo.getPath()[i].equals("bomb.png") || fwo.getPath()[i].equals("orange.png"))) || (level == 2 && fwo.getPath()[i].equals("bomb.png"))) {
                 continue;
-            }
-            else {
+            } else {
                 s.add("shapes\\" + fwo.getPath()[i]);
             }
         }
@@ -42,7 +41,7 @@ public class MyGameWorld implements World, Observable {
         s.copyInto(tmp);
         fwo.setPath(tmp);
         width = screenWidth;
-        this.speed=speed;
+        this.speed = speed;
         height = screenHeight;
         MyGameObject oo = new MyGameObject(0, 0, true, p);
         constant.add(oo);
@@ -53,7 +52,14 @@ public class MyGameWorld implements World, Observable {
         UndoList.add(new Memento(score, cp));
         CounterUndo++;
         add(l);
+    }
 
+    public List<GameObject> getMoving() {
+        return moving;
+    }
+
+    public List<GameObject> getControl() {
+        return control;
     }
 
     @Override
@@ -98,6 +104,9 @@ public class MyGameWorld implements World, Observable {
         MyGameObject m;
         iterator Controllit = new iterator(control);
         iterator Movinglit = new iterator(moving);
+        if (control.get(control.size() - 1).getY() <= 100) {
+            notify(null, "top");
+        }
         if (control.get(control.size() - 1).getY() <= 0) {
             while (Controllit.hasNext()) {
                 ((MyGameObject) Controllit.next()).setVisible(false);
@@ -108,13 +117,8 @@ public class MyGameWorld implements World, Observable {
 
         while (Movinglit.hasNext()) {
             m = (MyGameObject) Movinglit.next();
-            m.setY((m.getY() + 1));
-            if (m.getY() == getHeight()) {
-                m.setY(-1 * (int) (Math.random() * getHeight()));
-                m.setX((int) (Math.random() * getWidth()));
-            }
-            m.setX(m.getX() + (Math.random() > 0.5 ? 1 : -1));
-            if (m.isBomb() && m.getY() == control.get(control.size() - 1).getY() - 100 && m.getX() > clown.getX() -20  && m.getX() < clown.getX() + clown.getWidth() - 20) {
+            m.changeLocation(this);
+            if (m.isBomb() && m.getY() == control.get(control.size() - 1).getY() - 100 && m.getX() > clown.getX() - 20 && m.getX() < clown.getX() + clown.getWidth() - 20) {
                 notify(null, "warn");
             }
             if (m.isBomb() && intersect(m, control.get(control.size() - 1))) {
@@ -133,6 +137,7 @@ public class MyGameWorld implements World, Observable {
                     CounterUndo = UndoList.size() - 1;
                 }
                 control.add(m);
+                m.setCurrentState(m.getCatched());
                 if (m.isBomb() && control.size() == 2) {
                     while (Controllit.hasNext()) {
                         ((MyGameObject) Controllit.next()).setVisible(false);
@@ -175,6 +180,8 @@ public class MyGameWorld implements World, Observable {
             score++;
             notify(score, null);
             for (int i = size - 1; i > size - 4; i--) {
+                MyGameObject c = (MyGameObject) control.get(i);
+                c.setCurrentState(c.getNotCatched());
                 control.remove(i);
                 fwo.check_add(moving, height, width);
             }
@@ -184,13 +191,11 @@ public class MyGameWorld implements World, Observable {
             CounterUndo++;
         }
         iterator Controllit2 = new iterator(control);
+        Controllit2.next();
         MyGameObject b;
         while (Controllit2.hasNext()) {
             b = (MyGameObject) Controllit2.next();
-            if (control.size() > 1) {
-                b.setY(clown.getY() - ((control.size() - 1) * control.get(1).getHeight() + 40));
-                b.setX(clown.getX());
-            }
+            b.changeLocation(this);
         }
         saved = control.size();
         return true;
@@ -271,9 +276,8 @@ public class MyGameWorld implements World, Observable {
 
     public void notify(Object obj, String s) {
         iterator<Observer> obsit = new iterator<Observer>(listobservers);
-        while (obsit.hasNext()){
-            obsit.next().update(obj,s);
+        while (obsit.hasNext()) {
+            obsit.next().update(obj, s);
         }
     }
 }
- 
