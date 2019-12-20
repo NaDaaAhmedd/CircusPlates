@@ -6,7 +6,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.lang.management.MemoryUsage;
 
 public class MyGameObject implements GameObject {
     private static final int MAX_MSTATE = 1;
@@ -18,9 +17,28 @@ public class MyGameObject implements GameObject {
     private int type;
     private boolean horizontalOnly;
     private boolean isBomb = false;
+    private GameObjectState catched ;
+    private GameObjectState notCatched ;
+    private GameObjectState currentState ;
+
+
+    public void setCurrentState(GameObjectState currentState) {
+        this.currentState = currentState;
+    }
+
+    public GameObjectState getCatched() {
+        return catched;
+    }
+
+    public GameObjectState getNotCatched() {
+        return notCatched;
+    }
 
     public MyGameObject(int posX, int posY, boolean horizontalOnly, String path) {
         this(posX, posY, horizontalOnly, path, 0);
+        catched = new Catched(this);
+        notCatched = new NotCatched(this);
+        currentState = notCatched ;
     }
 
     public MyGameObject(int posX, int posY, boolean horizontalOnly, String path, int type) {
@@ -86,9 +104,6 @@ public class MyGameObject implements GameObject {
         this.visible = visible;
     }
 
-    public int getType() {
-        return type;
-    }
 
     public void setType(int type) {
         this.type = type;
@@ -98,4 +113,8 @@ public class MyGameObject implements GameObject {
         return isBomb;
     }
 
+
+    public void changeLocation (MyGameWorld gw){
+        currentState.changeLocation(gw);
+    }
 }
