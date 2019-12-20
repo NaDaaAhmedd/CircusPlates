@@ -12,6 +12,7 @@ public class flyweightGObject {
     private static flyweightGObject instance;
     private String path[];
     private List<GameObject> moving = new LinkedList<GameObject>();
+    private MyFactory factory = new MyFactory();
 
     private flyweightGObject() {
 
@@ -46,7 +47,7 @@ public class flyweightGObject {
 
         } else if (moving.size() < max_size) {
             for (int i = 0; i < max_size - moving.size(); i++) {
-                moving.add(new MyGameObject((int) (Math.random() * screenWidth), -1 * (int) (Math.random() * screenHeight), false, path[(int) (Math.random() * path.length - 1)]));
+                moving.add(factory.getGameObject(path,screenWidth,screenHeight));
 
             }
         }
