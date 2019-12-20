@@ -76,19 +76,19 @@ public class Launcher {
                 L1.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        Button_Performance(10,1,"res\\mickey2.png",10);
+                        Button_Performance(1,"res\\mickey2.png",10);
                     }
                 });
                 L2.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        Button_Performance(15,2,"res\\l2b.jpg",8);
+                        Button_Performance(2,"res\\l2b.jpg",8);
                     }
                 });
                 L3.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        Button_Performance(5,3,"res\\l3b.jpg",7);
+                        Button_Performance(3,"res\\l3b.jpg",7);
                     }
                 });
             }
@@ -97,7 +97,7 @@ public class Launcher {
 
 
 
-    public void Button_Performance(int MaxScore, int level, String path,int speed) {
+    public void Button_Performance(int level, String path,int speed) {
         f.setVisible(false);
         exit.setVisible(false);
         JMenuBar menuBar = new JMenuBar();
@@ -120,7 +120,7 @@ public class Launcher {
         redo.setBackground(menuBar.getBackground().darker());
         redo.setVisible(true);
         menuBar.add(redo);
-        final MyGameWorld[] GW = {new MyGameWorld(550, 700, MaxScore, level, path,speed)};
+        final MyGameWorld[] GW = {new MyGameWorld(550, 700, level, path,speed)};
         final GameEngine.GameController gameController = GameEngine.start("Disney Plates❤", GW[0], menuBar, Color.BLACK);
         undo.addActionListener(new ActionListener() {
             @Override
@@ -137,7 +137,7 @@ public class Launcher {
         newMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                GW[0] = new MyGameWorld(800, 700, MaxScore, level, path,speed);
+                GW[0] = new MyGameWorld(800, 700, level, path,speed);
                 gameController.changeWorld(GW[0]);
             }
         });
