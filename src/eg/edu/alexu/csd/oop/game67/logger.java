@@ -40,11 +40,7 @@ public class logger implements Observer {
     public void update(Object arg, String GameEnd) {
         if (isGameEnd) return;
         if (GameEnd != null) {
-            if (GameEnd.contains("win")) {
-                msg = "Player WIN!";
-                isGameEnd = true;
-                MyLog.info(msg);
-            } else if (GameEnd.contains("lose")) {
+            if (GameEnd.contains("lose")) {
                 msg = "Game Over!";
                 isGameEnd = true;
                 MyLog.info(msg);
